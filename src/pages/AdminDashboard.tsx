@@ -1,4 +1,3 @@
-
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,7 +37,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <DashboardLayout title="System Administration" userRole="admin" userName="Admin User">
+    <DashboardLayout title="System Administration" userRole="admin">
       <div className="space-y-6">
         {/* System Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

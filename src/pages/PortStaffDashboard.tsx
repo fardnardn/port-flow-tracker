@@ -1,4 +1,3 @@
-
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,7 +61,7 @@ const PortStaffDashboard = () => {
   );
 
   return (
-    <DashboardLayout title="Port Operations" userRole="port_staff" userName="Sarah Wilson">
+    <DashboardLayout title="Port Operations" userRole="port_staff">
       <div className="space-y-6">
         {/* Port Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

@@ -1,4 +1,3 @@
-
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,7 +56,7 @@ const DriverDashboard = () => {
   };
 
   return (
-    <DashboardLayout title="Driver Operations" userRole="driver" userName="Mike Thompson">
+    <DashboardLayout title="Driver Operations" userRole="driver">
       <div className="space-y-6">
         {/* Driver Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

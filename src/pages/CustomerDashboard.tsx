@@ -1,4 +1,3 @@
-
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,7 +60,7 @@ const CustomerDashboard = () => {
   };
 
   return (
-    <DashboardLayout title="Shipment Tracking" userRole="customer" userName="John Doe">
+    <DashboardLayout title="Shipment Tracking" userRole="customer">
       <div className="space-y-6">
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
