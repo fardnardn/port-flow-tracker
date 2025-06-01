@@ -6,16 +6,37 @@ import { Label } from "@/components/ui/label";
 import { Ship } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { resetPassword } = useAuth();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement Supabase password reset
-    console.log("Password reset for:", email);
-    setIsSubmitted(true);
+    setIsLoading(true);
+
+    const { error } = await resetPassword(email);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } else {
+      setIsSubmitted(true);
+      toast({
+        title: "Reset email sent",
+        description: "Check your email for password reset instructions.",
+      });
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -24,7 +45,7 @@ const ForgotPassword = () => {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Ship className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">PortFlow</span>
+            <span className="text-2xl font-bold text-gray-900">TrackPort</span>
           </div>
           <CardTitle className="text-2xl">Reset Password</CardTitle>
           <CardDescription>
@@ -46,10 +67,11 @@ const ForgotPassword = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Send Reset Link
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Sending..." : "Send Reset Link"}
               </Button>
             </form>
           ) : (

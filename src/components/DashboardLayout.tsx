@@ -1,20 +1,22 @@
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, User, Ship, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   title: string;
   userRole: string;
-  userName?: string;
 }
 
-const DashboardLayout = ({ children, title, userRole, userName = "User" }: DashboardLayoutProps) => {
+const DashboardLayout = ({ children, title, userRole }: DashboardLayoutProps) => {
+  const { signOut } = useAuth();
+  const { data: profile } = useProfile();
+
   const handleLogout = () => {
-    // TODO: Implement Supabase logout
-    console.log("Logout");
+    signOut();
   };
 
   return (
@@ -25,7 +27,7 @@ const DashboardLayout = ({ children, title, userRole, userName = "User" }: Dashb
           <div className="flex items-center space-x-4">
             <Link to="/" className="flex items-center space-x-2">
               <Ship className="h-8 w-8 text-blue-600" />
-              <span className="text-2xl font-bold text-gray-900">PortFlow</span>
+              <span className="text-2xl font-bold text-gray-900">TrackPort</span>
             </Link>
             <div className="border-l pl-4">
               <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
@@ -40,7 +42,7 @@ const DashboardLayout = ({ children, title, userRole, userName = "User" }: Dashb
             
             <div className="flex items-center space-x-2">
               <User className="h-5 w-5 text-gray-400" />
-              <span className="text-sm font-medium">{userName}</span>
+              <span className="text-sm font-medium">{profile?.full_name || 'User'}</span>
             </div>
             
             <Button variant="ghost" size="sm" onClick={handleLogout}>

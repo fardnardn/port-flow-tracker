@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Ship } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -17,11 +19,53 @@ const Signup = () => {
     fullName: "",
     company: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement Supabase authentication
-    console.log("Signup attempt:", formData);
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Passwords do not match",
+      });
+      return;
+    }
+
+    if (!formData.role) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select a role",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    const { error } = await signUp(
+      formData.email,
+      formData.password,
+      formData.fullName,
+      formData.company,
+      formData.role
+    );
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error creating account",
+        description: error.message,
+      });
+    } else {
+      navigate('/login');
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -30,7 +74,7 @@ const Signup = () => {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Ship className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">PortFlow</span>
+            <span className="text-2xl font-bold text-gray-900">TrackPort</span>
           </div>
           <CardTitle className="text-2xl">Create Account</CardTitle>
           <CardDescription>Join the port management system</CardDescription>
@@ -45,6 +89,7 @@ const Signup = () => {
                 value={formData.fullName}
                 onChange={(e) => setFormData({...formData, fullName: e.target.value})}
                 required
+                disabled={isLoading}
               />
             </div>
             
@@ -57,12 +102,13 @@ const Signup = () => {
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 required
+                disabled={isLoading}
               />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select onValueChange={(value) => setFormData({...formData, role: value})}>
+              <Select onValueChange={(value) => setFormData({...formData, role: value})} disabled={isLoading}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
@@ -83,6 +129,7 @@ const Signup = () => {
                 placeholder="Enter your company name"
                 value={formData.company}
                 onChange={(e) => setFormData({...formData, company: e.target.value})}
+                disabled={isLoading}
               />
             </div>
             
@@ -95,6 +142,7 @@ const Signup = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 required
+                disabled={isLoading}
               />
             </div>
             
@@ -107,11 +155,12 @@ const Signup = () => {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                 required
+                disabled={isLoading}
               />
             </div>
             
-            <Button type="submit" className="w-full">
-              Create Account
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
           

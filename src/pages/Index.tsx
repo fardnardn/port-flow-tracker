@@ -1,10 +1,26 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ship, Shield, Users, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 
 const Index = () => {
+  const { user, signOut } = useAuth();
+  const { data: profile } = useProfile();
+
+  const getDashboardLink = () => {
+    if (!profile) return "/";
+    switch (profile.role) {
+      case 'admin': return "/admin/dashboard";
+      case 'customer': return "/customer/dashboard";
+      case 'driver': return "/driver/dashboard";
+      case 'port_staff': return "/port-staff/dashboard";
+      case 'customs': return "/customs/dashboard";
+      default: return "/";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
       {/* Header */}
@@ -12,15 +28,31 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Ship className="h-8 w-8 text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900">PortFlow</h1>
+            <h1 className="text-2xl font-bold text-gray-900">TrackPort</h1>
           </div>
           <div className="space-x-4">
-            <Link to="/login">
-              <Button variant="outline">Login</Button>
-            </Link>
-            <Link to="/signup">
-              <Button>Get Started</Button>
-            </Link>
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600">
+                  Welcome, {profile?.full_name || user.email}
+                </span>
+                <Link to={getDashboardLink()}>
+                  <Button variant="outline">Dashboard</Button>
+                </Link>
+                <Button variant="ghost" onClick={signOut}>
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline">Login</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button>Get Started</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -36,11 +68,13 @@ const Index = () => {
             Streamline your port operations from shipment arrival to customer delivery. 
             Track, manage, and coordinate all aspects of port logistics with real-time updates.
           </p>
-          <Link to="/signup">
-            <Button size="lg" className="text-lg px-8 py-6">
-              Start Managing Shipments
-            </Button>
-          </Link>
+          {!user && (
+            <Link to="/signup">
+              <Button size="lg" className="text-lg px-8 py-6">
+                Start Managing Shipments
+              </Button>
+            </Link>
+          )}
         </div>
       </section>
 
@@ -150,7 +184,7 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Ship className="h-6 w-6" />
-            <span className="text-xl font-bold">PortFlow</span>
+            <span className="text-xl font-bold">TrackPort</span>
           </div>
           <p className="text-gray-400">
             Streamlining port operations worldwide
