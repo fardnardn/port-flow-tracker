@@ -5,6 +5,8 @@ import { FeaturesSection } from "@/components/FeaturesSection"
 import { AboutSection } from "@/components/AboutSection"
 import { BlogSection } from "@/components/BlogSection"
 import { ContactSection } from "@/components/ContactSection"
+import { Ship } from "lucide-react"
+
 
 const Index = () => {
   return (

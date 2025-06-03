@@ -25,6 +25,7 @@ export const useProfile = () => {
         .select('*')
         .eq('id', user.id)
         .single();
+if (error) console.error('Supabase error:', error);
 
       if (error) throw error;
       return data as Profile;

@@ -1,15 +1,39 @@
 
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Ship, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DarkModeToggle } from "./DarkModeToggle"
 import { useAuth } from "@/hooks/useAuth"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, signOut } = useAuth()
+  const navigate = useNavigate();
+
+  const handleSelect = (value) => {
+    switch (value) {
+      case 'customer':
+        navigate('/customer/dashboard');
+        break;
+      case 'driver':
+        navigate('/driver/dashboard');
+        break;
+      case 'port_staff':
+        navigate('/port-staff/dashboard');
+        break;
+      case 'customs':
+        navigate('/customs/dashboard');
+        break;
+      case 'admin':
+        navigate('/admin/dashboard');
+        break;
+      default:
+        break;
+    }
+  };
 
   const navItems = [
     { name: "Features", href: "#features" },
@@ -53,9 +77,27 @@ export function Navigation() {
             <DarkModeToggle />
             {user ? (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-700 dark:text-gray-300">
+                {/* list of diffrenet roles dashboards */}
+                <Select onValueChange={handleSelect}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="customer">Customer Dashboard</SelectItem>
+                    <SelectItem value="driver">Driver Dashboard</SelectItem>
+                    <SelectItem value="port_staff">Port Staff Dashboard</SelectItem>
+                    <SelectItem value="customs">Customs Dashboard</SelectItem>
+                    <SelectItem value="admin">Admin Dashboard</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* <Link to="/dashboard">
+                  <Button variant="ghost">Dashboard</Button>
+                </Link> */}
+
+                {/* <span className="text-sm text-gray-700 dark:text-gray-300">
                   Welcome back!
-                </span>
+                </span> */}
                 <Button variant="outline" size="sm" onClick={signOut}>
                   Sign Out
                 </Button>
