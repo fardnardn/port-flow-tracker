@@ -8,9 +8,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Ship, Package, MapPin, Plus, Search } from "lucide-react";
 import StatusBadge from "@/components/StatusBadge";
 import { useState } from "react";
+import ShipmentStatusUpdate from "@/components/ShipmentStatusUpdate";
 
 const PortStaffDashboard = () => {
   const [showNewShipmentForm, setShowNewShipmentForm] = useState(false);
+  const [showShipmentStatusUpdate, setShowShipmentStatusUpdate] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Mock data
@@ -126,13 +128,17 @@ const PortStaffDashboard = () => {
                 <MapPin className="h-4 w-4 mr-2" />
                 Assign Storage Location
               </Button>
-              <Button variant="outline">
+              <Button onClick={() => setShowShipmentStatusUpdate(!showShipmentStatusUpdate)} variant="outline">
                 <Package className="h-4 w-4 mr-2" />
                 Update Shipment Status
               </Button>
             </div>
           </CardContent>
         </Card>
+        {/* Shipment Status Update Form */}
+        {showShipmentStatusUpdate && (
+          <ShipmentStatusUpdate onClose={() => setShowShipmentStatusUpdate(false)} />
+        )}
 
         {/* New Shipment Form */}
         {showNewShipmentForm && (
