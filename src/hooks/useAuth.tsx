@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,6 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -43,29 +44,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string, company: string, role: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
-          company,
-          role
+    try {
+      console.log('Attempting signup with:', { email, fullName, company, role });
+      
+      // Validate role before sending to backend
+      const validRoles = ['admin', 'customer', 'driver', 'port_staff', 'customs'];
+      const validatedRole = validRoles.includes(role) ? role : 'customer';
+      
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName,
+            company: company,
+            role: validatedRole
+          }
         }
-      }
-    });
-
-    if (!error) {
-      toast({
-        title: "Account created successfully!",
-        description: "Please check your email to verify your account.",
       });
-    }
 
-    return { error };
+      console.log('Signup result:', { data, error });
+
+      if (!error) {
+        toast({
+          title: "Account created successfully!",
+          description: "Please check your email to verify your account.",
+        });
+      }
+
+      return { error };
+    } catch (err) {
+      console.error('Signup error:', err);
+      return { error: err };
+    }
   };
 
   const signIn = async (email: string, password: string) => {

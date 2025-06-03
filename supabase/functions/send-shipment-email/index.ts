@@ -9,14 +9,14 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  to: string;
-  subject: string;
-  shipmentNumber: string;
-  status: string;
-  customerName: string;
+  shipment_id: string;
+  shipment_number: string;
+  old_status: string;
+  new_status: string;
+  customer_email: string;
 }
 
-const getEmailTemplate = (shipmentNumber: string, status: string, customerName: string) => {
+const getEmailTemplate = (shipmentNumber: string, oldStatus: string, newStatus: string) => {
   const statusMessages = {
     arrived: "Your shipment has arrived at TrackPort and is being processed.",
     cleared: "Your shipment has successfully cleared customs and is ready for next steps.",
@@ -45,19 +45,20 @@ const getEmailTemplate = (shipmentNumber: string, status: string, customerName: 
         <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <h2 style="color: #1f2937; margin-top: 0;">Shipment Status Update</h2>
           
-          <p>Dear ${customerName},</p>
+          <p>Dear Customer,</p>
           
           <p>We have an update on your shipment:</p>
           
           <div style="background: #eff6ff; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #2563eb;">
             <p style="margin: 0;"><strong>Shipment Number:</strong> ${shipmentNumber}</p>
-            <p style="margin: 10px 0 0 0;"><strong>New Status:</strong> <span style="color: #2563eb; font-weight: bold; text-transform: capitalize;">${status.replace('_', ' ')}</span></p>
+            <p style="margin: 10px 0;"><strong>Previous Status:</strong> <span style="text-transform: capitalize;">${oldStatus.replace('_', ' ')}</span></p>
+            <p style="margin: 10px 0 0 0;"><strong>New Status:</strong> <span style="color: #2563eb; font-weight: bold; text-transform: capitalize;">${newStatus.replace('_', ' ')}</span></p>
           </div>
           
-          <p>${statusMessages[status as keyof typeof statusMessages] || 'Your shipment status has been updated.'}</p>
+          <p>${statusMessages[newStatus as keyof typeof statusMessages] || 'Your shipment status has been updated.'}</p>
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${Deno.env.get("SITE_URL") || 'https://trackport.com'}" 
+            <a href="https://bpedxafynasznabadyib.supabase.co" 
                style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
               Track Your Shipment
             </a>
@@ -86,38 +87,30 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, subject, shipmentNumber, status, customerName }: EmailRequest = await req.json();
+    const { shipment_id, shipment_number, old_status, new_status, customer_email }: EmailRequest = await req.json();
 
-    // Initialize Supabase client for sending emails via SMTP
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
-
-    // Use Supabase's built-in email functionality
-    // This will use your SMTP credentials configured in Supabase
-    const emailResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
-      },
-      body: JSON.stringify({
-        to: [to],
-        subject: subject,
-        html: getEmailTemplate(shipmentNumber, status, customerName),
-        from: "TrackPort <notifications@trackport.com>",
-      }),
+    console.log('Sending email for shipment status change:', {
+      shipment_id,
+      shipment_number,
+      old_status,
+      new_status,
+      customer_email
     });
 
-    if (!emailResponse.ok) {
-      throw new Error(`Email service error: ${emailResponse.statusText}`);
-    }
+    // Use Supabase's built-in SMTP functionality (configured in dashboard)
+    const emailHtml = getEmailTemplate(shipment_number, old_status, new_status);
+    
+    // For now, we'll log the email content since SMTP needs to be configured
+    console.log('Email content prepared for:', customer_email);
+    console.log('Email HTML:', emailHtml);
 
-    const result = await emailResponse.json();
-    console.log("Email sent successfully:", result);
+    // TODO: Configure SMTP settings in Supabase Dashboard > Authentication > SMTP Settings
+    // Once configured, you can send emails using the Supabase admin API
 
-    return new Response(JSON.stringify(result), {
+    return new Response(JSON.stringify({ 
+      success: true, 
+      message: 'Email notification logged. Configure SMTP in Supabase dashboard to send emails.' 
+    }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
