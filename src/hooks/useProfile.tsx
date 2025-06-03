@@ -20,16 +20,24 @@ export const useProfile = () => {
     queryFn: async () => {
       if (!user) return null;
       
+      console.log('Fetching profile for user:', user.id);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
-if (error) console.error('Supabase error:', error);
+        .maybeSingle(); // Use maybeSingle() instead of single() to handle case where profile doesn't exist yet
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error fetching profile:', error);
+        throw error;
+      }
+
+      console.log('Profile data:', data);
       return data as Profile;
     },
     enabled: !!user,
+    retry: 3, // Retry up to 3 times on failure
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
   });
 };
