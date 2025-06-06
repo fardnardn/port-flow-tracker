@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const validRoles = ['admin', 'customer', 'driver', 'port_staff', 'customs'];
       const validatedRole = validRoles.includes(role) ? role : 'customer';
       
-      const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl = "https://port-flow-tracker.vercel.app/"||`${window.location.origin}/`; 
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const resetPassword = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl = "https://port-flow-tracker.vercel.app/"||`${window.location.origin}/`; 
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
