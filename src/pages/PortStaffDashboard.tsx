@@ -1,3 +1,4 @@
+
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Ship, Package, MapPin, Plus, Search } from "lucide-react";
 import StatusBadge from "@/components/StatusBadge";
 import { useState } from "react";
-import ShipmentStatusUpdate from "@/components/ShipmentStatusUpdate";
 
 const PortStaffDashboard = () => {
   const [showNewShipmentForm, setShowNewShipmentForm] = useState(false);
@@ -135,9 +135,60 @@ const PortStaffDashboard = () => {
             </div>
           </CardContent>
         </Card>
+        
         {/* Shipment Status Update Form */}
         {showShipmentStatusUpdate && (
-          <ShipmentStatusUpdate onClose={() => setShowShipmentStatusUpdate(false)} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Update Shipment Status</CardTitle>
+              <CardDescription>Change the status of existing shipments</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="shipment-select">Select Shipment</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose shipment to update" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {recentShipments.map((shipment) => (
+                        <SelectItem key={shipment.id} value={shipment.id}>
+                          {shipment.id} - {shipment.customer}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status-select">New Status</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select new status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="arrived">Arrived</SelectItem>
+                      <SelectItem value="in_storage">In Storage</SelectItem>
+                      <SelectItem value="cleared">Cleared</SelectItem>
+                      <SelectItem value="in_transit">In Transit</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                      <SelectItem value="flagged">Flagged</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex space-x-4">
+                  <Button type="submit">Update Status</Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setShowShipmentStatusUpdate(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* New Shipment Form */}
