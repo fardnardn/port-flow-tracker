@@ -57,13 +57,17 @@ const Signup = () => {
     );
 
     if (error) {
-      console.log(error)
+      console.log('Signup error:', error);
       toast({
         variant: "destructive",
         title: "Error creating account",
         description: error.message,
       });
     } else {
+      toast({
+        title: "Account created!",
+        description: "Please check your email to verify your account, or use one of our demo accounts to login.",
+      });
       navigate('/login');
     }
 
@@ -169,11 +173,22 @@ const Signup = () => {
           </form>
           
           <div className="mt-6 text-center">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 mb-4">
               Already have an account?{" "}
               <Link to="/login" className="text-blue-600 hover:underline">
                 Sign in
               </Link>
+            </div>
+            
+            <div className="border-t pt-4">
+              <p className="text-xs text-gray-500 mb-2">Demo accounts (all roles available):</p>
+              <div className="grid grid-cols-2 gap-1 text-xs text-gray-600">
+                <div>admin@trackport.com</div>
+                <div>customer1@trackport.com</div>
+                <div>portstaff1@trackport.com</div>
+                <div>driver1@trackport.com</div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Password: Use the role name + "123" (e.g., admin123)</p>
             </div>
           </div>
         </CardContent>

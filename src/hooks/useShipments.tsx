@@ -27,12 +27,19 @@ export const useShipments = () => {
     queryFn: async () => {
       if (!user) return [];
       
+      console.log('Fetching shipments for user:', user.id);
+      
       const { data, error } = await supabase
         .from('shipments')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching shipments:', error);
+        throw error;
+      }
+      
+      console.log('Fetched shipments:', data);
       return data as Shipment[];
     },
     enabled: !!user,
@@ -45,6 +52,8 @@ export const useUpdateShipmentStatus = () => {
 
   return useMutation({
     mutationFn: async ({ shipmentId, status }: { shipmentId: string; status: string }) => {
+      console.log('Updating shipment status:', { shipmentId, status });
+      
       const { data, error } = await supabase
         .from('shipments')
         .update({ 
@@ -55,17 +64,23 @@ export const useUpdateShipmentStatus = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating shipment status:', error);
+        throw error;
+      }
+      
+      console.log('Updated shipment:', data);
       return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
       toast({
         title: "Status Updated",
-        description: `Shipment ${data.shipment_number} status updated to ${data.status}`,
+        description: `Shipment ${data.shipment_number} status updated to ${data.status.replace('_', ' ')}`,
       });
     },
     onError: (error: any) => {
+      console.error('Mutation error:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to update shipment status",
