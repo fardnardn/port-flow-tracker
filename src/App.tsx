@@ -36,7 +36,7 @@ const App = () => (
               <Route 
                 path="/admin/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['admin']}>
+                  <ProtectedRoute allowedRoles={['admin','driver','customer','port_staff','customs']}>
                     <AdminDashboard />
                   </ProtectedRoute>
                 } 
@@ -44,7 +44,7 @@ const App = () => (
               <Route 
                 path="/customer/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['customer']}>
+                  <ProtectedRoute allowedRoles={['admin','driver','customer','port_staff','customs']}>
                     <CustomerDashboard />
                   </ProtectedRoute>
                 } 
@@ -52,7 +52,7 @@ const App = () => (
               <Route 
                 path="/driver/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['driver']}>
+                  <ProtectedRoute allowedRoles={['admin','driver','customer','port_staff','customs']}>
                     <DriverDashboard />
                   </ProtectedRoute>
                 } 
@@ -60,7 +60,7 @@ const App = () => (
               <Route 
                 path="/port-staff/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['port_staff']}>
+                  <ProtectedRoute allowedRoles={['admin','driver','customer','port_staff','customs']}>
                     <PortStaffDashboard />
                   </ProtectedRoute>
                 } 
@@ -68,7 +68,7 @@ const App = () => (
               <Route 
                 path="/customs/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['customs']}>
+                  <ProtectedRoute allowedRoles={['admin','driver','customer','port_staff','customs']}>
                     <CustomsDashboard />
                   </ProtectedRoute>
                 } 

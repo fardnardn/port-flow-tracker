@@ -47,7 +47,7 @@ export const useProfile = () => {
             full_name: user.user_metadata?.full_name || 'User',
             company: user.user_metadata?.company || '',
             role: user.user_metadata?.role || 'customer',
-            email: user.email || '',
+            // email: user.email || '',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           })
